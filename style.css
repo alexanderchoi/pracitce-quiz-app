@@ -1,0 +1,4 @@
+.highlight:hover {
+  background-color: orange;
+  cursor: pointer;
+}
