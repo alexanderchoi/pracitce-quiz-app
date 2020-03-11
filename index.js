@@ -14,16 +14,34 @@
 // once object is all used, stop timer and
 //   display stats, pass or fail quiz
 
-const startButton = document.getElementById("start");
+const startButton = document.getElementById("startButton");
 const questionsDiv = document.getElementById("question");
 const statsDiv = document.getElementById("stats");
+const startOverButton = document.getElementById("startOverButton");
+let questionsAnswered = 0;
+let stats = [];
 
 startButton.addEventListener("click", function() {
-  showNextQuestion(questions);
+  showNextQuestion();
   startButton.style.display = "none";
 });
 
-const showNextQuestion = questions => {
+startOverButton.addEventListener("click", function() {
+  startOverButton.style.display = "none";
+
+  stats = [];
+  statsDiv.innerHTML = "";
+  statsDiv.style.display = "none";
+
+  for (let i = 0; i < questions.length; i++) {
+    questions[i]["answered"] = false;
+  }
+
+  questionsDiv.style.display = "block";
+  showNextQuestion();
+});
+
+const showNextQuestion = () => {
   // loop through object
   for (let i = 0; i < Object.keys(questions).length; i++) {
     // find question that isn't answered
@@ -34,49 +52,79 @@ const showNextQuestion = questions => {
       break;
     }
   }
-  // renderStats();
-};
-
-const renderQuestion = (question, questionNumber) => {
-  // console.log(`questionNumber = ${questionNumber}`);
-  // console.log(question);
-  questionsDiv.innerHTML = `<p>${question["title"]}</p>`;
-  for (let i = 0; i < question["answers"].length; i++) {
-    questionsDiv.innerHTML += `<p class='highlight'>${question["answers"][i]}</p>`;
+  if (questionsAnswered == Object.keys(questions).length) {
+    questionsDiv.style.display = "none";
+    renderStats();
   }
 };
 
-function doesthiswork() {
-  alert("hi");
-}
-
-const saveAnswer = (questionNumber, chosenAnswer) => {
-  console.log("save");
+const renderQuestion = (question, questionNumber) => {
+  questionsDiv.innerHTML = `<p>${question["title"]}</p>`;
+  for (let i = 0; i < question["answers"].length; i++) {
+    const p = document.createElement("p");
+    p.classList.add("highlight");
+    p.appendChild(new Text(question["answers"][i]));
+    p.addEventListener("click", () => saveAnswer(i));
+    questionsDiv.appendChild(p);
+  }
 };
 
-const stats = {};
+const saveAnswer = answerNumber => {
+  let answeredQuestion = questions[questionsAnswered];
+  answeredQuestion["answer"] = answerNumber;
+  stats.push(answeredQuestion);
+  questions[questionsAnswered]["answered"] = true;
+  questionsAnswered++;
+  showNextQuestion();
+};
 
-const renderStats = stats => {
-  console.log("stats");
+const renderStats = () => {
+  const numQuestions = Object.keys(stats).length;
+  let numCorrect = 0;
+  for (let i = 0; i < numQuestions; i++) {
+    let answer = stats[i]["answer"];
+    let correctAnswer = stats[i]["correctAnswer"];
+    if (answer === correctAnswer) {
+      numCorrect++;
+    } else {
+      const question = document.createElement("p");
+      question.appendChild(new Text(questions[i]["title"]));
+      const yourAnswer = document.createElement("p");
+      yourAnswer.appendChild(
+        new Text(`Your answer: ${questions[i]["answers"][answer]}`)
+      );
+      const correct = document.createElement("p");
+      correct.appendChild(
+        new Text(`Correct answer: ${questions[i]["answers"][correctAnswer]}`)
+      );
+      statsDiv.appendChild(question);
+      statsDiv.appendChild(yourAnswer);
+      statsDiv.appendChild(correct);
+    }
+  }
+  const score = document.createElement("p");
+  score.appendChild(new Text(`Your score: ${numCorrect}/${numQuestions}`));
+  statsDiv.prepend(score);
+  startOverButton.style.display = "block";
 };
 
 const questions = [
   {
     title: "What day is it today?",
     answers: ["Monday", "Tuesday", "Wednesday", "Thursday"],
-    correctAnswer: "c",
+    correctAnswer: 2,
     answered: false
   },
   {
-    title: "What's your name?'",
-    answers: ["Bob", "Bot", "BAlex", "Ben"],
-    correctAnswer: "c",
+    title: "What's your name?",
+    answers: ["Bob", "Bot", "Balex", "Ben"],
+    correctAnswer: 2,
     answered: false
   },
   {
     title: "What year is it?",
     answers: ["1600", "2000", "2020", "2001"],
-    correctAnswer: "b",
+    correctAnswer: 1,
     answered: false
   }
 ];

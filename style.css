@@ -2,3 +2,7 @@
   background-color: orange;
   cursor: pointer;
 }
+
+#startOverButton {
+  display: none;
+}
