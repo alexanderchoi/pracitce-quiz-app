@@ -36,11 +36,11 @@ startOverButton.addEventListener("click", function() {
   for (let i = 0; i < questions.length; i++) {
     questions[i]["answered"] = false;
   }
-  console.log(questions);
 
   questionsDiv.innerHTML = "";
   questionsDiv.style.display = "block";
-  // showNextQuestion();
+  questionsAnswered = 0;
+  showNextQuestion();
 });
 
 const showNextQuestion = () => {
@@ -48,7 +48,6 @@ const showNextQuestion = () => {
   for (let i = 0; i < Object.keys(questions).length; i++) {
     // find question that isn't answered
     if (!questions[i]["answered"]) {
-      console.log("found unanswered");
       // render question to html
       let questionNumber = i;
       renderQuestion(questions[i], questionNumber);
@@ -57,11 +56,12 @@ const showNextQuestion = () => {
   }
   if (questionsAnswered == Object.keys(questions).length) {
     questionsDiv.style.display = "none";
+
     renderStats();
   }
 };
 
-const renderQuestion = (question, questionNumber) => {
+const renderQuestion = question => {
   questionsDiv.innerHTML = `<p>${question["title"]}</p>`;
   for (let i = 0; i < question["answers"].length; i++) {
     const p = document.createElement("p");
@@ -108,6 +108,7 @@ const renderStats = () => {
   const score = document.createElement("p");
   score.appendChild(new Text(`Your score: ${numCorrect}/${numQuestions}`));
   statsDiv.prepend(score);
+  statsDiv.style.display = "block";
   startOverButton.style.display = "block";
 };
 
