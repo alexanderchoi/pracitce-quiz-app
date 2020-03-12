@@ -22,8 +22,8 @@ let questionsAnswered = 0;
 let stats = [];
 
 startButton.addEventListener("click", function() {
-  showNextQuestion();
   startButton.style.display = "none";
+  showQuestions();
 });
 
 startOverButton.addEventListener("click", function() {
@@ -40,10 +40,10 @@ startOverButton.addEventListener("click", function() {
   questionsDiv.innerHTML = "";
   questionsDiv.style.display = "block";
   questionsAnswered = 0;
-  showNextQuestion();
+  showQuestions();
 });
 
-const showNextQuestion = () => {
+const showQuestions = () => {
   // loop through object
   for (let i = 0; i < Object.keys(questions).length; i++) {
     // find question that isn't answered
@@ -78,13 +78,12 @@ const saveAnswer = answerNumber => {
   stats.push(answeredQuestion);
   questions[questionsAnswered]["answered"] = true;
   questionsAnswered++;
-  showNextQuestion();
+  showQuestions();
 };
 
 const renderStats = () => {
-  const numQuestions = Object.keys(stats).length;
   let numCorrect = 0;
-  for (let i = 0; i < numQuestions; i++) {
+  for (let i = 0; i < questions.length; i++) {
     let answer = stats[i]["answer"];
     let correctAnswer = stats[i]["correctAnswer"];
     if (answer === correctAnswer) {
@@ -106,7 +105,7 @@ const renderStats = () => {
     }
   }
   const score = document.createElement("p");
-  score.appendChild(new Text(`Your score: ${numCorrect}/${numQuestions}`));
+  score.appendChild(new Text(`Your score: ${numCorrect}/${questions.length}`));
   statsDiv.prepend(score);
   statsDiv.style.display = "block";
   startOverButton.style.display = "block";
