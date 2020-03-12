@@ -36,9 +36,11 @@ startOverButton.addEventListener("click", function() {
   for (let i = 0; i < questions.length; i++) {
     questions[i]["answered"] = false;
   }
+  console.log(questions);
 
+  questionsDiv.innerHTML = "";
   questionsDiv.style.display = "block";
-  showNextQuestion();
+  // showNextQuestion();
 });
 
 const showNextQuestion = () => {
@@ -46,6 +48,7 @@ const showNextQuestion = () => {
   for (let i = 0; i < Object.keys(questions).length; i++) {
     // find question that isn't answered
     if (!questions[i]["answered"]) {
+      console.log("found unanswered");
       // render question to html
       let questionNumber = i;
       renderQuestion(questions[i], questionNumber);
